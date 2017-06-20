@@ -1,14 +1,24 @@
 var paddle = {x:0,y:230};
 var ai = {x:780, y:230};
-var ball = {x: 20, 
-	y :15,
+var ball = {x: 40, 
+	y :30,
 	speedx:20,
 	speedy:15
 	 }
+var draw;
 
 function startGame(){
-    var canvas = document.getElementById("canvas");
+	var canvas = document.getElementById("canvas");
 	var ctx = canvas.getContext("2d");
+	ctx.clearRect(paddle.x,paddle.y,20,140);
+	paddle = {x:0,y:230};
+    ai = {x:780, y:230};
+    ball = {x: 40, 
+	y :30,
+	speedx:20,
+	speedy:15
+	 }
+	clearInterval(draw);
 	ctx.strokeStyle = "white";
 	ctx.setLineDash([30, 20]);
 	ctx.beginPath();
@@ -17,8 +27,7 @@ function startGame(){
 	ctx.stroke();
 	drawAi();
 	drawPaddle();
-	ctx.fillRect(ball.x,ball.y,20,20);
-	var draw = setInterval(moveBall,100);
+	draw = setInterval(moveBall,50);
 }
 
 function drawPaddle(){
@@ -64,7 +73,7 @@ function moveAi(){
 	var canvas = document.getElementById("canvas");
     var ctx = canvas.getContext('2d');
     ctx.clearRect(ai.x,ai.y,20,140);
-    ai.y = 48/ball.speedy;
+    ai.y = ball.y-70;
     drawAi();
 }
 
@@ -72,16 +81,22 @@ function moveBall(){
 	var canvas = document.getElementById("canvas");
     var ctx = canvas.getContext('2d');
     ctx.clearRect(ball.x,ball.y,20,20);
-    if(ball.x>=780)
+    if(ball.x === paddle.x + 20 && ball.y > paddle.y && ball.y<paddle.y+140)
+    	ball.speedx=-ball.speedx;
+    if(ball.x === ai.x - 20 && ball.y > ai.y && ball.y<ai.y+140)
     	ball.speedx=-ball.speedx;
     if(ball.y>=580)
     	ball.speedy=-ball.speedy
-    if(ball.x<=0)
-    	ball.speedx=-ball.speedx;
     if(ball.y<=0)
-    	ball.speedy=-ball.speedy;    ball.x+=ball.speedx;
+    	ball.speedy=-ball.speedy;  
+    if(ball.x<0) {
+    	alert('Game Over!');
+    	startGame();
+    } 
+    ball.x+=ball.speedx;
     ball.y+=ball.speedy;
     drawBall();
+    moveAi();
 
 
 }
